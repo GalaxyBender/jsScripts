@@ -65,10 +65,10 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 	}
 	fetchProxy (url, options, i) {
 		const proxy = [
+			'',
+			'http://71.143.151.139:8080/proxy/?url=',
+			'',
 			'https://corsproxy.io/?',
-			'',
-			'',
-			'',
 			'https://cors.io?',
 			'https://jsonp.afeld.me/?url=',
 			'http://71.143.151.139:25565/',
