@@ -82,6 +82,7 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 		}).catch(error => {
 			if (i === proxy.length - 1)
 				throw error
+			console.log(proxy[i]);
 			return this.fetchProxy(url, options, i + 1)
 		})
 	}
