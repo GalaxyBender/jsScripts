@@ -42,31 +42,40 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 </html>`;
     this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
       if (data) {
-        this.srcdoc = data.replace(/<head([^>]*)>/i, `<head$1>
+        data = data.replace(/<head([^>]*)>/i, `<head$1>
 	<base href="${url}">
 	<script>
 	// X-Frame-Bypass navigation event handlers
 	document.addEventListener('click', e => {
 		if (frameElement && document.activeElement && document.activeElement.href) {
-			e.preventDefault()
-			frameElement.load(document.activeElement.href)
+			e.preventDefault();
+			frameElement.load(document.activeElement.href);
 		}
-	})
+	});
 	document.addEventListener('submit', e => {
 		if (frameElement && document.activeElement && document.activeElement.form && document.activeElement.form.action) {
-			e.preventDefault()
+			e.preventDefault();
 			if (document.activeElement.form.method === 'post')
-				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)})
+				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)});
 			else
-				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)))
+				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)));
 		}
-	})
+ 
+	});
 	</script>`);
+        this.srcdoc = this.injectBase(data, url);
       }
     }).catch(e => {
       console.error('Cannot load X-Frame-Bypass:', e);
       alert('Cannot load X-Frame-Bypass: ' + e);
     });
+  }
+  injectBase(html, base) {
+    // Remove any <base> elements inside <head>     
+    html = html.replace(/(<[^>/]*head[^>]*>)[\s\S]*?(<[^>/]*base[^>]*>)[\s\S]*?(<[^>]*head[^>]*>)/img, "$1 $3");
+    // Add <base> just before </head>  
+    html = html.replace(/(<[^>/]*head[^>]*>[\s\S]*?)(<[^>]*head[^>]*>)/img, `$1 ` + base + " $2");
+    return (html);
   }
   fetchProxy(url, options, i) {
     const proxy = ['https://api.allorigins.win/get?url=', 'https://api.codetabs.com/v1/proxy/?quest=', 'https://corsproxy.io/?', 'https://cors-anywhere.herokuapp.com/', 'https://cors.io?', 'https://jsonp.afeld.me/?url=', 'http://71.143.151.139:25565/', 'http://71.143.151.139:8080/proxy/?url='];
