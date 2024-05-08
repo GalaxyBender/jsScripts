@@ -1,3 +1,8 @@
+
+
+
+
+
 customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
     constructor() {
         super();
@@ -41,25 +46,26 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 </html>`;
         this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
             if (data)
-              	data.replace(/<head([^>]*)>/i, `<head$1>
+              	data = data.replace(/<head([^>]*)>/i, `<head$1>
 	<base href="${url}">
 	<script>
 	// X-Frame-Bypass navigation event handlers
 	document.addEventListener('click', e => {
 		if (frameElement && document.activeElement && document.activeElement.href) {
-			e.preventDefault()
-			frameElement.load(document.activeElement.href)
+			e.preventDefault();
+			frameElement.load(document.activeElement.href);
 		}
-	})
+	});
 	document.addEventListener('submit', e => {
 		if (frameElement && document.activeElement && document.activeElement.form && document.activeElement.form.action) {
-			e.preventDefault()
+			e.preventDefault();
 			if (document.activeElement.form.method === 'post')
-				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)})
+				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)});
 			else
-				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)))
+				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)));
 		}
-	})
+ 
+	});
 	</script>`);
                 this.srcdoc = injectBase(data, url);
 }).catch(e => {
