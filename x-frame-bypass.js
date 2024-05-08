@@ -76,11 +76,11 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 		   
 		    'https://cors.io?', 
 		   'https://cors-anywhere.herokuapp.com/', 
-		  'https://api.codetabs.com/v1/proxy/?quest=', 
+		  
 	    
 	    'https://api.allorigins.win/get?url=', 
 	    'https://corsproxy.io/?', 
-
+ 'https://api.codetabs.com/v1/proxy/?quest=', 
 
 	    
 		   'http://71.143.151.139:25565/', 
