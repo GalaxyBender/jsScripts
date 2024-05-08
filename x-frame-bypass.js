@@ -64,7 +64,7 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
                 this.srcdoc = injectBase(data, url);
 }).catch(e => {
   console.error('Cannot load X-Frame-Bypass:', e); 
-  alert('Cannot load X-Frame-Bypass: ', e);
+  alert('Cannot load X-Frame-Bypass: ' + e);
 });
     }
 
