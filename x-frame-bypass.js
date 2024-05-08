@@ -42,7 +42,7 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 </html>`;
     this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
       if (data) {
-        data = data.replace(/<head([^>]*)>/i, `<head$1>
+        this.srcdoc = data.replace(/<head([^>]*)>/i, `<head$1>
 	<base href="${url}">
 	<script>
 	// X-Frame-Bypass navigation event handlers
@@ -63,29 +63,26 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
  
 	});
 	</script>`);
-        this.srcdoc = this.injectBase(data, url);
+        
       }
     }).catch(e => {
       console.error('Cannot load X-Frame-Bypass:', e);
       alert('Cannot load X-Frame-Bypass: ' + e);
     });
   }
-  injectBase(html, base) {
-    // Remove any <base> elements inside <head>     
-    html = html.replace(/(<[^>/]*head[^>]*>)[\s\S]*?(<[^>/]*base[^>]*>)[\s\S]*?(<[^>]*head[^>]*>)/img, "$1 $3");
-    // Add <base> just before </head>  
-    html = html.replace(/(<[^>/]*head[^>]*>[\s\S]*?)(<[^>]*head[^>]*>)/img, `$1 ` + base + " $2");
-    return (html);
-  }
   fetchProxy(url, options, i) {
     const proxy = [
 	    
-		   'https://api.codetabs.com/v1/proxy/?quest=', 
-		   'https://corsproxy.io/?', 
+		   
+		    'https://cors.io?', 
 		   'https://cors-anywhere.herokuapp.com/', 
-		   'https://cors.io?', 
-		   'https://jsonp.afeld.me/?url=', 
+		  'https://api.codetabs.com/v1/proxy/?quest=', 
+	    
 	    'https://api.allorigins.win/get?url=', 
+	    'https://corsproxy.io/?', 
+
+
+	    
 		   'http://71.143.151.139:25565/', 
 		   'http://71.143.151.139:8080/proxy/?url='
     ];
