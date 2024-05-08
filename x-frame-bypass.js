@@ -78,7 +78,17 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
     return (html);
   }
   fetchProxy(url, options, i) {
-    const proxy = ['https://api.allorigins.win/get?url=', 'https://api.codetabs.com/v1/proxy/?quest=', 'https://corsproxy.io/?', 'https://cors-anywhere.herokuapp.com/', 'https://cors.io?', 'https://jsonp.afeld.me/?url=', 'http://71.143.151.139:25565/', 'http://71.143.151.139:8080/proxy/?url='];
+    const proxy = [
+	    
+		   'https://api.codetabs.com/v1/proxy/?quest=', 
+		   'https://corsproxy.io/?', 
+		   'https://cors-anywhere.herokuapp.com/', 
+		   'https://cors.io?', 
+		   'https://jsonp.afeld.me/?url=', 
+	    'https://api.allorigins.win/get?url=', 
+		   'http://71.143.151.139:25565/', 
+		   'http://71.143.151.139:8080/proxy/?url='
+    ];
     return fetch(proxy[i] + url, options).then(res => {
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       return res;
