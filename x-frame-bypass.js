@@ -1,18 +1,17 @@
 customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
-  constructor() {
-    super();
-  }
-  connectedCallback() {
-    this.load(this.src);
-    this.src = '';
-    this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation'; // all except allow-top-navigation
-  }
-  load(url, options) {
-    if (!url || !url.startsWith('http')) {
-      throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`);
-    }
-    console.log('X-Frame-Bypass loading:', url);
-    this.srcdoc = `<html>
+	constructor () {
+		super()
+	}
+	connectedCallback () {
+		this.load(this.src)
+		this.src = ''
+		this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation' // all except allow-top-navigation
+	}
+	load (url, options) {
+		if (!url || !url.startsWith('http'))
+			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`)
+		console.log('X-Frame-Bypass loading:', url)
+		this.srcdoc = `<html>
 <head>
 	<style>
 	.loader {
@@ -39,70 +38,49 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 <body>
 	<div class="loader"></div>
 </body>
-</html>`;
-    this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
-      if (data) {
-        data = data.replace(/<head([^>]*)>/i, `<head$1>
+</html>`
+		this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
+			if (data)
+				this.srcdoc = data.replace(/<head([^>]*)>/i, `<head$1>
 	<base href="${url}">
 	<script>
 	// X-Frame-Bypass navigation event handlers
 	document.addEventListener('click', e => {
 		if (frameElement && document.activeElement && document.activeElement.href) {
-			e.preventDefault();
-			frameElement.load(document.activeElement.href);
+			e.preventDefault()
+			frameElement.load(document.activeElement.href)
 		}
-	});
+	})
 	document.addEventListener('submit', e => {
 		if (frameElement && document.activeElement && document.activeElement.form && document.activeElement.form.action) {
-			e.preventDefault();
+			e.preventDefault()
 			if (document.activeElement.form.method === 'post')
-				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)});
+				frameElement.load(document.activeElement.form.action, {method: 'post', body: new FormData(document.activeElement.form)})
 			else
-				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)));
+				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)))
 		}
- 
-	});
-	</script>`);
-        this.srcdoc = this.injectBase(data, url);
-      }
-    }).catch(e => {
-      console.error('Cannot load X-Frame-Bypass:', e);
-      alert('Cannot load X-Frame-Bypass: ' + e);
-    });
-  }
-  injectBase(html, base) {
-    // Remove any <base> elements inside <head>     
-    html = html.replace(/(<[^>/]*head[^>]*>)[\s\S]*?(<[^>/]*base[^>]*>)[\s\S]*?(<[^>]*head[^>]*>)/img, "$1 $3");
-    // Add <base> just before </head>  
-    html = html.replace(/(<[^>/]*head[^>]*>[\s\S]*?)(<[^>]*head[^>]*>)/img, `$1 ` + base + " $2");
-    return (html);
-  }
-  fetchProxy(url, options, i) {
-	
-    const proxy = [
-	    
-		   
-		   
-		  'https://cors.io/?',
+	})
+	</script>`)
+		}).catch((e) => {
+			console.error('Cannot load X-Frame-Bypass:', e);
+			alert('Cannot load X-Frame-Bypass: ' + e);
+				})
+	}
+	fetchProxy (url, options, i) {
+		const proxy = [
+			'https://cors.io/?',
 			'https://jsonp.afeld.me/?url=',
 			'https://cors-anywhere.herokuapp.com/',
-	    'https://corsproxy.io/?', 
-	    
-    ];
-    
-    return fetch(proxy[i] + url, {
-	    headers: {
-      "x-requested-with": "fetch",
-    }
-    }).then(res => {
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      return res;
-    }).catch(error => {
-      if (i === proxy.length - 1) throw error;
-      console.log(proxy[i]);
-      return this.fetchProxy(url, options, i + 1);
-    });
-  }
-}, {
-  extends: 'iframe'
-});
+			'https://api.allorigins.win/get?url='
+		]
+		return fetch(proxy[i] + url, options).then(res => {
+			if (!res.ok)
+				throw new Error(`${res.status} ${res.statusText}`);
+			return res
+		}).catch(error => {
+			if (i === proxy.length - 1)
+				throw error
+			return this.fetchProxy(url, options, i + 1)
+		})
+	}
+}, {extends: 'iframe'})
