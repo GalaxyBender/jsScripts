@@ -89,11 +89,12 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 	    'https://corsproxy.io/?', 
 	    
     ];
-    if(proxy[i] == 'https://cors-anywhere.herokuapp.com/'){
-	options.headers['x-requested-with'] = 'fetch';
-	    
+    
+    return fetch(proxy[i] + url, {
+	    headers: {
+      "x-requested-with": "fetch",
     }
-    return fetch(proxy[i] + url, options).then(res => {
+    }).then(res => {
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       return res;
     }).catch(error => {
