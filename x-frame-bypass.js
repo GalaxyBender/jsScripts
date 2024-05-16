@@ -8,7 +8,10 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 		this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation' // all except allow-top-navigation
 	}
 	load (url, options) {
-		if (!url || !url.startsWith('http'))
+		if(url === 'https://www.google.com/?igu=1'){
+            this.src = url;
+        }
+        else{if (!url || !url.startsWith('http'))
 			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`)
 		console.log('X-Frame-Bypass loading:', url)
 		this.srcdoc = `<html>
@@ -64,18 +67,15 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 		}).catch((e) => {
 			console.error('Cannot load X-Frame-Bypass:', e);
 			alert('Cannot load X-Frame-Bypass: ' + e);
-				})
+				})}
 	}
 	fetchProxy (url, options, i) {
 		const proxy = [
-			'https://cors.io/?',
-			'https://jsonp.afeld.me/?url=',
+			'https://cors-anywhere.herokuapp.com/',
 			'https://proxy.cors.sh/',
 			'https://proxy-ibmasyzzya-uc.a.run.app/',
 			'https://cors-server.fly.dev/',
 			'https://api.allorigins.win/raw?url=',
-			'https://cors-anywhere.herokuapp.com/',
-			
 		]
 		return fetch(proxy[i] + url, options).then(res => {
 			if (!res.ok)
