@@ -9,8 +9,7 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 	}
 	load (url, options) {
 		if(url === 'https://www.google.com/?igu=1'){
-            this.src = url;
-            this.srcdoc = undefined;
+            this.srcdoc = `<iframe src='${url}'></iframe>`;
         }
         else{if (!url || !url.startsWith('http'))
 			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`);
