@@ -1,19 +1,20 @@
 customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 	constructor () {
-		super()
+		super();
 	}
 	connectedCallback () {
-		this.load(this.src)
-		this.src = ''
-		this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation' // all except allow-top-navigation
+		this.load(this.src);
+		this.src = '';
+		this.sandbox = '' + this.sandbox || 'allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation'; // all except allow-top-navigation
 	}
 	load (url, options) {
 		if(url === 'https://www.google.com/?igu=1'){
             this.src = url;
+            this.srcdoc = undefined;
         }
         else{if (!url || !url.startsWith('http'))
-			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`)
-		console.log('X-Frame-Bypass loading:', url)
+			throw new Error(`X-Frame-Bypass src ${url} does not start with http(s)://`);
+		console.log('X-Frame-Bypass loading:', url);
 		this.srcdoc = `<html>
 <head>
 	<style>
@@ -41,7 +42,7 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 <body>
 	<div class="loader"></div>
 </body>
-</html>`
+</html>`;
 		this.fetchProxy(url, options, 0).then(res => res.text()).then(data => {
 			if (data)
 				this.srcdoc = data.replace(/<head([^>]*)>/i, `<head$1>
@@ -63,11 +64,11 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 				frameElement.load(document.activeElement.form.action + '?' + new URLSearchParams(new FormData(document.activeElement.form)))
 		}
 	})
-	</script>`)
+	</script>`);
 		}).catch((e) => {
 			console.error('Cannot load X-Frame-Bypass:', e);
 			alert('Cannot load X-Frame-Bypass: ' + e);
-				})}
+				});}
 	}
 	fetchProxy (url, options, i) {
 		const proxy = [
@@ -76,15 +77,15 @@ customElements.define('x-frame-bypass', class extends HTMLIFrameElement {
 			'https://proxy-ibmasyzzya-uc.a.run.app/',
 			'https://cors-server.fly.dev/',
 			'https://api.allorigins.win/raw?url=',
-		]
+		];
 		return fetch(proxy[i] + url, options).then(res => {
 			if (!res.ok)
 				throw new Error(`${res.status} ${res.statusText}`);
-			return res
+			return res;
 		}).catch(error => {
 			if (i === proxy.length - 1)
-				throw error
-			return this.fetchProxy(url, options, i + 1)
-		})
+				throw error;
+			return this.fetchProxy(url, options, i + 1);
+		});
 	}
-}, {extends: 'iframe'})
+}, {extends: 'iframe'});
